@@ -28,7 +28,8 @@ export const translateJSX = (
   try {
     const [ast] = parseHTML(`<0>${translation}</0>`);
     return children.map(replaceElements(ast, options));
-  } catch {
+  } catch (e) {
+    console.log(e);
     console.error(
       'In order to use JSX nesting, install %chtml-parse-string',
       'font-weight: 700',

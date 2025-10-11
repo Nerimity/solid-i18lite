@@ -1,22 +1,3 @@
-export class ResourceStore {
-  public data: Resource;
-  public options: InitOptions;
-  constructor(data: Resource, options: InitOptions) {
-    this.data = data;
-    this.options = options;
-  }
-
-  /**
-   * Gets fired when resources got added or removed
-   */
-  on(event: 'added' | 'removed', callback: (lng: string, ns: string) => void) {}
-  /**
-   * Remove event listener
-   * removes all callback when callback not specified
-   */
-  off(event: 'added' | 'removed', callback?: (lng: string, ns: string) => void) {}
-}
-
 export type $Dictionary<T = unknown> = { [key: string]: T };
 
 export type ResourceKey =
@@ -33,19 +14,17 @@ export interface Resource {
 }
 
 export interface InterpolationOptions {
-  prefix?: string; // default: '{{'
-  suffix?: string; // default: '}}'
+  prefix?: string;
+  suffix?: string;
 }
 
 export interface InitOptions {
   resources: Resource;
   lng?: string;
   interpolation?: InterpolationOptions;
-
-  keySeparator?: false | string; // default: '.'
-  nsSeparator?: false | string; // default: ':'
+  keySeparator?: false | string;
+  nsSeparator?: false | string;
   defaultNS?: string;
-
   ignoreJSONStructure?: boolean;
 }
 
@@ -56,13 +35,8 @@ export interface TOptionsBase {
 export type TOptions<TInterpolationMap extends object = $Dictionary> = TOptionsBase & TInterpolationMap;
 
 export type TFunction = {
-  // 1. Overload signature: key and options
-  (key: string, options?: {}): string; // I'm assuming it returns a string
-
-  // 2. Overload signature: key, defaultValue, and options
+  (key: string, options?: {}): string;
   (key: string, defaultValue: string, options?: {}): string;
-
-  // 3. The single **implementation signature** (must be compatible with all overloads)
   (key: string, arg2?: string | {}, arg3?: {}): string;
 };
 
@@ -76,32 +50,9 @@ export interface i18n {
   changeLanguage: (lng: string) => Promise<TFunction>;
   addResourceBundle(lng: string, ns: string, resources: any, deep?: boolean, overwrite?: boolean): i18n;
 
-  store?: ResourceStore;
+  store?: { data: Resource };
   options?: InitOptions;
 }
-
-const escapeRegex = (str: string) => {
-  // Escape characters with special meaning either inside or outside character sets.
-  // Use a simple backslash escape when it’s always valid, and a `\xnn` escape when the simpler form would be ambiguous.
-  return str.replace(/[|\\{}()[\]^$+*?.]/g, '\\$&').replace(/-/g, '\\x2d');
-};
-const interpolate = (str: string, data: object): string => {
-  // Return the original string if there's nothing to interpolate.
-  if (!str) return '';
-
-  // 1. Escape the prefix and suffix to be safely used in the regex.
-  const escapedPrefix = escapeRegex(options?.interpolation?.prefix || '{{');
-  const escapedSuffix = escapeRegex(options?.interpolation?.suffix || '}}');
-
-  // 2. Build the regex dynamically.
-  // Example with defaults: /\{\{\s*(\w+)\s*\}\}/g
-  const regex = new RegExp(`${escapedPrefix}\\s*(\\w+)\\s*${escapedSuffix}`, 'g');
-
-  // 3. The replacement logic remains the same.
-  return str.replace(regex, (match, key) => {
-    return Object.prototype.hasOwnProperty.call(data, key) ? data[key] : match;
-  });
-};
 
 let events: Record<string, (...args: any[]) => void> = {};
 let ns = 'translation';
@@ -109,18 +60,47 @@ let language = '';
 const DefaultOptions: InitOptions = { resources: {}, interpolation: { prefix: '{{', suffix: '}}' } };
 let options = DefaultOptions;
 
+const escapeRegex = (str: string): string => {
+  return str.replace(/[-|\\{}()[\]^$+*?.]/g, (c) => (c === '-' ? '\\x2d' : `\\${c}`));
+};
+
+const regexCache = new Map<string, RegExp>();
+
+const interpolate = (str: string, data: object): string => {
+  if (!str) return '';
+
+  const interp = options?.interpolation;
+  const prefix = interp?.prefix ?? '{{';
+  const suffix = interp?.suffix ?? '}}';
+  const cacheKey = prefix + '|' + suffix;
+
+  let regex = regexCache.get(cacheKey);
+  if (!regex) {
+    const escapedPrefix = escapeRegex(prefix);
+    const escapedSuffix = escapeRegex(suffix);
+    regex = new RegExp(`${escapedPrefix}\\s*(\\w+)\\s*${escapedSuffix}`, 'g');
+    regexCache.set(cacheKey, regex);
+  }
+
+  return str.replace(regex, (match, key) => {
+    return Object.prototype.hasOwnProperty.call(data, key) ? (data as any)[key] : match;
+  });
+};
+
 const t: TFunction = (key: string, optionsOrDefault?: string | {}, arg3?: {}) => {
   let rawResource =
     getResource(instance.language, ns, key) ?? (typeof optionsOrDefault === 'string' ? optionsOrDefault : key);
 
   if (arg3 || (typeof optionsOrDefault === 'object' && optionsOrDefault !== null)) {
-    return interpolate(rawResource, arg3 || optionsOrDefault);
+    return interpolate(rawResource, (arg3 || optionsOrDefault) as object);
   }
   return rawResource;
 };
+
 const on = (event: string, callback: (...args: any[]) => void) => {
   events[event] = callback;
 };
+
 const init: i18n['init'] = (newOptions, callback) => {
   options = DefaultOptions;
   if (newOptions) {
@@ -128,110 +108,95 @@ const init: i18n['init'] = (newOptions, callback) => {
     options.interpolation.prefix = newOptions.interpolation?.prefix || '{{';
     options.interpolation.suffix = newOptions.interpolation?.suffix || '}}';
   }
-  language = newOptions.lng || '';
-  instance.store = new ResourceStore(options.resources || {}, options);
+  language = newOptions?.lng || '';
+  instance.store = { data: options.resources || {} };
   options.resources = {};
-  callback(null, t);
+  callback?.(null, t);
 };
-const changeLanguage = (lang) => {
+
+const changeLanguage = (lang: string) => {
   language = lang;
   return Promise.resolve(t);
 };
 
 const deepMerge = <T extends $Dictionary>(target: T, source: $Dictionary, overwrite: boolean = true): T => {
-  // Assert target to 'any' to bypass generic indexing issues
   const targetAsAny = target as any;
 
   for (const key in source) {
     const targetValue = targetAsAny[key];
     const sourceValue = source[key];
 
-    // 1. Check if both are objects (and not arrays)
     if (sourceValue && typeof sourceValue === 'object' && !Array.isArray(sourceValue)) {
-      // 2. If the target value isn't an object (or is an array), initialize it
       if (typeof targetValue !== 'object' || Array.isArray(targetValue)) {
-        // FIX: Assert the new empty object as $Dictionary to satisfy index signature requirement
         targetAsAny[key] = {} as $Dictionary;
       }
-
-      // 3. Recursive call. We know sourceValue is an object now, so cast it.
       deepMerge(targetAsAny[key] as $Dictionary, sourceValue as $Dictionary, overwrite);
     } else if (overwrite || targetValue === undefined) {
-      // 4. Assign the value (simple property or array)
       targetAsAny[key] = sourceValue;
     }
   }
   return target;
 };
 
-const addResourceBundle: i18n['addResourceBundle'] = (lng, ns, resources, deep = true, overwrite = true) => {
-  // Ensure the target language and namespace objects exist
+const addResourceBundle: i18n['addResourceBundle'] = (lng, nsName, resources, deep = true, overwrite = true) => {
+  instance.store = instance.store || { data: {} };
   instance.store.data = instance.store.data || {};
   instance.store.data[lng] = instance.store.data[lng] || {};
-  instance.store.data[lng][ns] = instance.store.data[lng][ns] || ({} as ResourceKey);
+  instance.store.data[lng][nsName] = instance.store.data[lng][nsName] || ({} as ResourceKey);
 
-  // We must assert the existing and new resources to a type compatible with spreading (like $Dictionary)
-  const existingResources = instance.store.data[lng][ns] as $Dictionary;
+  const existingResources = instance.store.data[lng][nsName] as $Dictionary;
   const newResources = resources as $Dictionary;
 
   if (deep) {
-    // Perform a deep merge
-    // (Assuming you applied the fixes to deepMerge from the previous step)
     deepMerge(existingResources, newResources, overwrite);
   } else {
-    // Shallow merge/overwrite
-    instance.store.data[lng][ns] = overwrite
-      ? newResources
-      : // FIX: Use the asserted variables for the spread operator
-        { ...newResources, ...existingResources };
+    instance.store.data[lng][nsName] = overwrite ? newResources : { ...newResources, ...existingResources };
   }
 
-  // Notify listeners that resources have been added
-  (events['loaded'] || (() => {}))(lng, ns);
+  (events['loaded'] || (() => {}))(lng, nsName);
 
   return instance;
 };
+
+type Dict = Record<string, any>;
+
 const getResource = (
   lng: string,
-  ns: string,
+  nsName: string,
   key: string,
-  options?: Pick<InitOptions, 'keySeparator' | 'ignoreJSONStructure'>
+  opts?: Pick<InitOptions, 'keySeparator' | 'ignoreJSONStructure'>
 ): any => {
-  if (!instance.store || !instance.store.data[lng] || !instance.store.data[lng][ns]) {
-    // If the store, language, or namespace doesn't exist, return undefined
-    return undefined;
-  }
+  const store = instance.store;
+  if (!store) return undefined;
 
-  const namespaceResources = instance.store.data[lng][ns];
+  const dataForLng = store.data?.[lng];
+  if (!dataForLng) return undefined;
 
-  // Check if the resources are a string (which shouldn't happen if properly bundled,
-  // but is allowed by your ResourceKey type)
-  if (typeof namespaceResources === 'string') {
-    // Since there's no way to look up a key in a string, return undefined or the string itself
-    return undefined;
-  }
+  const namespaceResources = dataForLng[nsName];
+  if (!namespaceResources) return undefined;
 
-  // Determine the key separator, defaulting to what's in options or a fallback (e.g., '.')
-  const separator = options?.keySeparator ?? instance.options?.keySeparator ?? '.';
+  if (typeof namespaceResources === 'string') return undefined;
 
-  if (separator === false) {
-    // If keySeparator is false, the key is the exact property name
-    return namespaceResources[key];
-  } else {
-    // If a separator is used, we need to traverse the nested object structure
-    const keys = key.split(separator);
-    let resource = namespaceResources as $Dictionary; // Start traversing from the namespace object
+  const separator = opts?.keySeparator ?? instance.options?.keySeparator ?? '.';
 
-    for (let i = 0; i < keys.length; i++) {
-      if (resource[keys[i]] === undefined) {
-        return undefined; // Key not found
-      }
-      // Move to the next nested level
-      resource = resource[keys[i]] as $Dictionary;
+  if (separator === false) return (namespaceResources as Dict)[key];
+
+  const sepStr = String(separator);
+  if (key.indexOf(sepStr) === -1) return (namespaceResources as Dict)[key];
+
+  let obj: any = namespaceResources;
+  let start = 0;
+  for (let i = 0; i <= key.length; i++) {
+    if (i === key.length || key[i] === sepStr) {
+      const part = key.slice(start, i);
+      if (obj == null) return undefined;
+      if (!(part in obj)) return undefined;
+      obj = obj[part];
+      start = i + 1;
     }
-
-    return resource;
   }
+
+  return obj;
 };
 
 const createInstance = (): i18n => {

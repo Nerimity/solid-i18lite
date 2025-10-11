@@ -19,11 +19,12 @@
   },
   "exports": {
     ".": {
-      "browser": "./dist/browser.mjs",
-      "import": "./dist/ssr.mjs",
-      "require": "./dist/ssr.js",
       "types": "./dist/types/index.d.ts",
-      "default": "./dist/browser.mjs"
+      "browser": {
+        "default": "./dist/browser.mjs"
+      },
+      "import": "./dist/ssr.mjs",
+      "require": "./dist/ssr.js"
     }
   },
   "files": [
