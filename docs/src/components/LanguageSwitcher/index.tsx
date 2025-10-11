@@ -1,4 +1,4 @@
-import { useTransContext } from '@mbarzda/solid-i18next';
+import { useTransContext } from '@nerimity/solid-i18lite';
 import { createSignal, Index, type VoidComponent } from 'solid-js';
 import { button, buttonActive } from './styles.module.css';
 

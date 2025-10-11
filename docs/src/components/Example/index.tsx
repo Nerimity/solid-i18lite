@@ -1,4 +1,4 @@
-import { useTransContext } from '@mbarzda/solid-i18next';
+import { useTransContext } from '@nerimity/solid-i18lite';
 import { Show, children, createSignal, type JSXElement, type ParentComponent } from 'solid-js';
 import { changed, code, translated, translatedSup } from './styles.module.css';
 

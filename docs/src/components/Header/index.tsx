@@ -14,8 +14,8 @@ export const Header: VoidComponent = () => {
         onclick={() => setOpened(!isOpened())}
       ></button>
       <h1 class={heading}>
-        @mbarzda/solid-i18next / Examples{' '}
-        <a class={github} href="https://github.com/mbarzda/solid-i18next">
+        @nerimity/solid-i18lite / Examples{' '}
+        <a class={github} href="https://github.com/nerimity/solid-i18lite">
           Github
         </a>
       </h1>

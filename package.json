@@ -1,5 +1,5 @@
 {
-  "author": "Martynas Barzda <martynas@barzda.pro>",
+  "author": "SupertigerDev",
   "description": "i18next for SolidJS",
   "devDependencies": {
     "@babel/plugin-transform-runtime": "^7.28.3",
@@ -47,7 +47,7 @@
   "license": "MIT",
   "main": "./dist/ssr.js",
   "module": "./dist/ssr.mjs",
-  "name": "@mbarzda/solid-i18next",
+  "name": "@nerimity/solid-i18lite",
   "peerDependencies": {
     "html-parse-string": "<=1.x",
     "solid-js": ">=1.8.x"
@@ -57,7 +57,7 @@
       "optional": true
     }
   },
-  "repository": "github:mbarzda/solid-i18next",
+  "repository": "github:nerimity/solid-i18lite",
   "scripts": {
     "build:browser": "vite build --config vite.browser.config.js",
     "build:docs": "vite build --config vite.docs.config.js",

@@ -1,8 +1,8 @@
 # i18next for Solid
 
-![npm (scoped)](https://img.shields.io/npm/v/@mbarzda/solid-i18next?color=seagreen)
-[![codecov](https://codecov.io/gh/mbarzda/solid-i18next/branch/main/graph/badge.svg?token=RGWEZWK8T2)](https://codecov.io/gh/mbarzda/solid-i18next)
-[![npm bundle size](https://img.shields.io/bundlephobia/minzip/@mbarzda/solid-i18next)](https://bundlephobia.com/package/@mbarzda/solid-i18next)
+![npm (scoped)](https://img.shields.io/npm/v/@nerimity/solid-i18lite?color=seagreen)
+[![codecov](https://codecov.io/gh/nerimity/solid-i18lite/branch/main/graph/badge.svg?token=RGWEZWK8T2)](https://codecov.io/gh/nerimity/solid-i18lite)
+[![npm bundle size](https://img.shields.io/bundlephobia/minzip/@nerimity/solid-i18lite)](https://bundlephobia.com/package/@nerimity/solid-i18lite)
 
 The purpose of this library is to provide ability to support [i18next](https://www.i18next.com/) library in Solid applications
 with `<TransProvider />` and `<Trans />` components.
@@ -25,7 +25,7 @@ with `<TransProvider />` and `<Trans />` components.
 Installation:
 
 ```sh
-npm install @mbarzda/solid-i18next i18next --save
+npm install @nerimity/solid-i18lite i18next --save
 ```
 
 ### Simple Example
@@ -36,10 +36,10 @@ Default value can be wrapped with `<Trans />` component or set with `options` or
 
 ```tsx
 // esm
-import { TransProvider, Trans } from '@mbarzda/solid-i18next';
+import { TransProvider, Trans } from '@nerimity/solid-i18lite';
 
 // cjs
-const { TransProvider, Trans } = require('@mbarzda/solid-i18next');
+const { TransProvider, Trans } = require('@nerimity/solid-i18lite');
 
 render(() => (
   <TransProvider>
@@ -64,7 +64,7 @@ Resources can be added on initialization with `options` property in `<TransProvi
 by calling `addResources` method from `TransContext`, which can be got with `useTransContext()`.
 
 ```tsx
-import { Trans, TransProvider, useTransContext } from '@mbarzda/solid-18next';
+import { Trans, TransProvider, useTransContext } from '@nerimity/solid-18lite';
 
 const resources = {
     lt: {...},
@@ -98,7 +98,7 @@ Default language can be provided to `<TransProvider />` with `lng` or `options` 
 To change a language you need to use `TransContext` and call `changeLanguage`.
 
 ```tsx
-import { useTransContext } from '@mbarzda/solid-18next';
+import { useTransContext } from '@nerimity/solid-18lite';
 
 const Component = () => {
   const [, { changeLanguage }] = useTransContext();

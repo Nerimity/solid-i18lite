@@ -10,7 +10,7 @@
     "outDir": "./dist",
     "paths": {
       "#/*": ["./docs/src/*"],
-      "@mbarzda/solid-i18next": ["./src/index.ts"]
+      "@nerimity/solid-i18lite": ["./src/index.ts"]
     },
     "resolveJsonModule": true,
     "target": "esnext",

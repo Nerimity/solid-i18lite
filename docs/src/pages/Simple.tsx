@@ -1,5 +1,5 @@
 import { Example, LanguageSwitcher } from '#/components';
-import { Trans, TransProvider } from '@mbarzda/solid-i18next';
+import { Trans, TransProvider } from '@nerimity/solid-i18lite';
 import type { VoidComponent } from 'solid-js';
 import i18next, { type InitOptions } from '../../../src/i18Lite';
 
