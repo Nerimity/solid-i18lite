@@ -1,5 +1,5 @@
-import type { TOptions } from 'i18next';
 import { children, type ParentComponent } from 'solid-js';
+import type { TOptions } from './i18Lite';
 import { useTransContext } from './TransProvider';
 import { translateJSX } from './utils/translate-jsx';
 

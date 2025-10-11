@@ -1,7 +1,6 @@
-import type { InitOptions, TFunction } from "i18next";
-import type { TransProps } from "../Trans";
-import { hasInterpolation } from "./has-interpolation";
-
+import type { InitOptions, TFunction } from '../i18Lite';
+import type { TransProps } from '../Trans';
+import { hasInterpolation } from './has-interpolation';
 
 const isNode = !globalThis.window;
 

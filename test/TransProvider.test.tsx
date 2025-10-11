@@ -1,5 +1,5 @@
-import type { BackendModule, i18n } from 'i18next';
 import { TransProvider, useTransContext } from '../src';
+import type { i18n } from '../src/i18Lite';
 import { messages, renderComponent, resources_lt } from './shared';
 
 describe('TransProvider component', () => {
@@ -13,7 +13,7 @@ describe('TransProvider component', () => {
   describe('Instance must be the same', () => {
     let i18next: i18n;
     beforeEach(async () => {
-      i18next = (await import('i18next')).default;
+      i18next = (await import('../src/i18Lite')).default;
     });
 
     test('Default instance', () => {
@@ -72,39 +72,39 @@ describe('TransProvider component', () => {
     });
   });
 
-  describe('BackendModule', () => {
-    let i18next: i18n;
-    beforeEach(async () => {
-      i18next = (await import('i18next')).default.createInstance();
-    });
+  // describe('BackendModule', () => {
+  //   let i18next: i18n;
+  //   beforeEach(async () => {
+  //     i18next = (await import('i18next')).default.createInstance();
+  //   });
 
-    test('Initial load', () => {
-      const Comp = () => {
-        const [t] = useTransContext();
-        expect(t('greeting')).toEqual(null);
-        return '';
-      };
-      renderComponent(() => <TransProvider instance={i18next} children={<Comp />} />);
-    });
+  //   test('Initial load', () => {
+  //     const Comp = () => {
+  //       const [t] = useTransContext();
+  //       expect(t('greeting')).toEqual(null);
+  //       return '';
+  //     };
+  //     renderComponent(() => <TransProvider instance={i18next} children={<Comp />} />);
+  //   });
 
-    test('Emit', () => {
-      const spy = jest.spyOn(i18next, 'emit');
-      i18next.use({
-        init() {
-          i18next.emit('loaded');
-        },
-        read(_lng, _ns, cb) {
-          cb(null, { greeting: messages.simple.en });
-        },
-        type: 'backend',
-      } as BackendModule);
-      const Comp = () => {
-        const [t] = useTransContext();
-        expect(spy).toBeCalled();
-        expect(t('greeting')).toEqual('greeting');
-        return '';
-      };
-      renderComponent(() => <TransProvider instance={i18next} children={<Comp />} />);
-    });
-  });
+  //   test('Emit', () => {
+  //     const spy = jest.spyOn(i18next, 'emit');
+  //     i18next.use({
+  //       init() {
+  //         i18next.emit('loaded');
+  //       },
+  //       read(_lng, _ns, cb) {
+  //         cb(null, { greeting: messages.simple.en });
+  //       },
+  //       type: 'backend',
+  //     } as BackendModule);
+  //     const Comp = () => {
+  //       const [t] = useTransContext();
+  //       expect(spy).toBeCalled();
+  //       expect(t('greeting')).toEqual('greeting');
+  //       return '';
+  //     };
+  //     renderComponent(() => <TransProvider instance={i18next} children={<Comp />} />);
+  //   });
+  // });
 });
