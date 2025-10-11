@@ -3,20 +3,19 @@
     {
       "displayName": "browser",
       "preset": "solid-jest/preset/browser",
-      "testMatch": [
-        "<rootDir>/test/**/*.test.*"
-      ]
+      "testMatch": ["<rootDir>/test/**/*.test.*"],
+      "transform": { "^.+\\.(t|j)sx?$": "babel-jest" },
+      "transformIgnorePatterns": ["node_modules/(?!(solid-js|seroval-plugins)/)"],
+      "moduleNameMapper": {
+        "^solid-js/web$": "solid-js/web/dist/web.cjs"
+      }
     },
     {
       "displayName": "node",
       "preset": "solid-jest/preset/node",
       "testEnvironment": "<rootDir>/test/node.ts",
-      "testMatch": [
-        "<rootDir>/test/**/*.test.*"
-      ]
+      "testMatch": ["<rootDir>/test/**/*.test.*"]
     }
   ],
-  "coverageReporters": [
-    "cobertura"
-  ]
+  "coverageReporters": ["cobertura"]
 }
