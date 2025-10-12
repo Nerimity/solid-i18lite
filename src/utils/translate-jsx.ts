@@ -1,6 +1,6 @@
+import type { TFunction, i18n } from '@nerimity/i18lite';
 import type { parse } from 'html-parse-string';
 import type { ParentProps } from 'solid-js';
-import type { TFunction, i18n } from '../i18Lite';
 import type { TransProps } from '../Trans';
 import { replaceElements } from './replace-elements';
 import { translateWithInterpolation } from './translate-with-interpolation';

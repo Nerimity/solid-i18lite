@@ -1,5 +1,5 @@
+import type { InitOptions } from '@nerimity/i18lite';
 import type { IDom } from 'html-parse-string';
-import type { InitOptions } from '../i18Lite';
 import { hasInterpolation } from './has-interpolation';
 
 export const replaceElements =

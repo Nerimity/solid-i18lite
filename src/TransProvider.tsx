@@ -1,5 +1,5 @@
+import i18next, { type InitOptions, type TFunction, type i18n } from '@nerimity/i18lite';
 import { createContext, createSignal, useContext, type ParentComponent } from 'solid-js';
-import i18next, { type InitOptions, type TFunction, type i18n } from './i18Lite';
 
 export type TransProviderActions = {
   addResources(lng: string, ns: string, resources: any): i18n;

@@ -1,7 +1,7 @@
 import { Example, LanguageSwitcher } from '#/components';
+import i18next, { type InitOptions } from '@nerimity/18lite';
 import { Trans, TransProvider } from '@nerimity/solid-i18lite';
 import type { VoidComponent } from 'solid-js';
-import i18next, { type InitOptions } from '../../../src/i18Lite';
 
 const SimplePage: VoidComponent = () => {
   const options: InitOptions = {

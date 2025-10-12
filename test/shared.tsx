@@ -1,8 +1,8 @@
+import i18next, { type InitOptions } from '@nerimity/i18lite';
 import { render } from '@solidjs/testing-library';
 import type { Component } from 'solid-js';
 import { renderToString } from 'solid-js/web';
 import { TransProvider } from '../src';
-import i18next, { type InitOptions } from '../src/i18Lite';
 
 export const messages = {
   custom_interpolation: {

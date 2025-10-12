@@ -25,7 +25,7 @@ with `<TransProvider />` and `<Trans />` components.
 Installation:
 
 ```sh
-npm install @nerimity/solid-i18lite i18next --save
+npm install @nerimity/solid-i18lite @nerimity/i18lite --save
 ```
 
 ### Simple Example

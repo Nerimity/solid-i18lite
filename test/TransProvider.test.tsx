@@ -1,5 +1,5 @@
+import type { i18n } from '@nerimity/i18lite';
 import { TransProvider, useTransContext } from '../src';
-import type { i18n } from '../src/i18Lite';
 import { messages, renderComponent, resources_lt } from './shared';
 
 describe('TransProvider component', () => {
@@ -13,7 +13,7 @@ describe('TransProvider component', () => {
   describe('Instance must be the same', () => {
     let i18next: i18n;
     beforeEach(async () => {
-      i18next = (await import('../src/i18Lite')).default;
+      i18next = (await import('@nerimity/i18lite')).default;
     });
 
     test('Default instance', () => {

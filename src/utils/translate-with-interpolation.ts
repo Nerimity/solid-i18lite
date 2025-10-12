@@ -1,4 +1,4 @@
-import type { InitOptions, TFunction } from '../i18Lite';
+import type { InitOptions, TFunction } from '@nerimity/i18lite';
 import type { TransProps } from '../Trans';
 import { hasInterpolation } from './has-interpolation';
 
