@@ -9,10 +9,10 @@ export const replaceElements =
     if (typeof child === 'string') {
       if (hasInterpolation(child, interpolation)) return decodeHtmlEntities(ast.children[index].children?.[0].content);
 
-      return ast.children[index].content;
+      return decodeHtmlEntities(ast.children[index].content);
     }
 
-    child.textContent = ast.children[index].children?.[0].content;
+    child.textContent = decodeHtmlEntities(ast.children[index].children?.[0].content);
 
     return child;
   };
