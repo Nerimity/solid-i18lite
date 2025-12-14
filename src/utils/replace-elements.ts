@@ -1,12 +1,13 @@
 import type { InitOptions } from '@nerimity/i18lite';
 import type { IDom } from 'html-parse-string';
+import { decodeHtmlEntities } from './decodeHtmlEntities';
 import { hasInterpolation } from './has-interpolation';
 
 export const replaceElements =
   (ast: IDom, { interpolation }: InitOptions) =>
   (child: Node, index: number) => {
     if (typeof child === 'string') {
-      if (hasInterpolation(child, interpolation)) return ast.children[index].children?.[0].content;
+      if (hasInterpolation(child, interpolation)) return decodeHtmlEntities(ast.children[index].children?.[0].content);
 
       return ast.children[index].content;
     }

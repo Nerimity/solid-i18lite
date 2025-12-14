@@ -1,5 +1,6 @@
 import type { InitOptions, TFunction } from '@nerimity/i18lite';
 import type { TransProps } from '../Trans';
+import { decodeHtmlEntities } from './decodeHtmlEntities';
 import { hasInterpolation } from './has-interpolation';
 
 const isNode = !globalThis.window;
@@ -7,7 +8,9 @@ const isNode = !globalThis.window;
 export const translateWithInterpolation = (t: TFunction, options: InitOptions, props: TransProps) => (item) => {
   const type = typeof item;
 
-  if (type === 'string' && hasInterpolation(item, options.interpolation)) return t(item, props.options);
+  if (type === 'string' && hasInterpolation(item, options.interpolation)) {
+    return decodeHtmlEntities(t(item, props.options));
+  }
 
   if (type === 'object') {
     const textContent = item.textContent ?? item.t;
