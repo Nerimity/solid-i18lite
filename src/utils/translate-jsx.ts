@@ -1,21 +1,22 @@
 import type { TFunction, i18n } from '@nerimity/i18lite';
-import type { parse } from 'html-parse-string';
+import type { parse, stringify } from 'html-parse-string';
 import type { ParentProps } from 'solid-js';
 import type { TransProps } from '../Trans';
 import { replaceElements } from './replace-elements';
 import { translateWithInterpolation } from './translate-with-interpolation';
 
 export let parseHTML: typeof parse;
-
+export let stringifyHtml: typeof stringify;
 (async () => {
   try {
     // @ts-ignore
     const module = await import('html-parse-string');
     parseHTML = module.parse;
+    stringifyHtml = module.stringify;
   } catch {}
 })();
 
-const htmlParseStringNotFoundError = () => {
+export const htmlParseStringNotFoundError = () => {
   console.error(
     'In order to use JSX nesting, install %chtml-parse-string',
     'font-weight: 700',
